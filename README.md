@@ -4,6 +4,8 @@ Grafana Wrapper for Bitrise API
 
 ![](images/Grafana-Dashboard.png)
 
+# Run Locally
+
 ## Install Dependencies
 
 ```npm i```
@@ -11,6 +13,10 @@ Grafana Wrapper for Bitrise API
 ## Running Grafana JSON Data Source
 
 ```node index.js```
+
+# Run on Repl.it
+
+[![Run on Repl.it](https://repl.it/badge/github/DamienBitrise/bitrise-grafana-api)](https://repl.it/github/DamienBitrise/bitrise-grafana-api)
 
 ## Two Grafana JSON Endpoints will be available
 
