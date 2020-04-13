@@ -18,6 +18,12 @@ Grafana Wrapper for Bitrise API
 
 [![Run on Repl.it](https://repl.it/badge/github/DamienBitrise/bitrise-grafana-api)](https://repl.it/github/DamienBitrise/bitrise-grafana-api)
 
+Just click the button above and when the Repl loads click Run.
+
+Copy the base URL from the running Repl
+
+![](images/replit-url.png)
+
 ## Two Grafana JSON Endpoints will be available
 
 - /builds
@@ -42,9 +48,11 @@ Grafana Wrapper for Bitrise API
 
 ![](images/JSON-Plugin-Config.png)
 
+Using the Base URL from your server or Repl configure two Grafana JSON Data Sources
+
 ### Builds
 
-**URL:** /builds
+**URL:** BASE_URL/builds
 
 **Headers**
 - Authorization (Personal Access Token for Bitrise API)
@@ -53,7 +61,7 @@ Grafana Wrapper for Bitrise API
 
 ### Queue
 
-**URL:** /queue
+**URL:** BASE_URL/queue
 
 **Headers**
 - Authorization (Personal Access Token for Bitrise API)
