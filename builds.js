@@ -1,20 +1,13 @@
 const utils = require('./utils')
 const fetch = require('node-fetch');
 
-function getApps(all_apps, api_key, callback) {
-  return fetch(utils.BASE_URL, utils.getHeaders(api_key))
+function getApp(appSlug, api_key, callback) {
+  return fetch(utils.BASE_URL+'/'+appSlug, utils.getHeaders(api_key))
     .then(res => res.json())
-    .then((apps) => {
-      apps.data.forEach((app)=>{
-        all_apps[app.slug] = {
-          app
-        };
-      })
-      if(apps.paging.next){
-        getApps(all_apps, api_key, apps.paging.next, callback)
-      } else {
-        callback(all_apps);
-      }
+    .then((app) => {
+      callback(app.data);
+    }).catch((err) => {
+      console.log('Error Getting App:', err);
     });
 }
 
@@ -42,21 +35,20 @@ function getBuilds(api_key, all_builds, from, to, appSlug, next, callback) {
 module.exports = {
   getAllData: (appSlugsFilter, api_key, from, to, callback) => {
     let all_apps = {};
-    getApps(all_apps, api_key, (apps) => {
-      let appSlugs = Object.keys(apps);
-      let complete = 0;
-      appSlugs.forEach((appSlug)=>{
-        if(!appSlugsFilter || appSlugsFilter.indexOf(appSlug) != -1){
-          all_apps[appSlug] = apps[appSlug];
-          let all_builds = [];
-          getBuilds(api_key, all_builds, from, to, appSlug, 0, (builds) => {
-            complete++;
-            all_apps[appSlug].builds = builds;
-            if(complete == appSlugs.length || (appSlugsFilter && complete == appSlugsFilter.length)){
-              callback(all_apps);
-            }
-          })
-        }
+    let complete = 0;
+    appSlugsFilter.forEach((appSlug)=>{
+      getApp(appSlug, api_key, (app) => {
+        all_apps[appSlug] = {
+          title: app.title
+        };
+        let all_builds = [];
+        getBuilds(api_key, all_builds, from, to, appSlug, 0, (builds) => {
+          complete++;
+          all_apps[appSlug].builds = builds;
+          if(complete == appSlugsFilter.length){
+            callback(all_apps);
+          }
+        })
       });
     });
   },
@@ -77,12 +69,12 @@ module.exports = {
             let build_duration = (finished_at.getTime() - started_on_worker_at.getTime()) / 60000;
             let queue_duration = (started_on_worker_at.getTime() - triggered_at.getTime()) / 60000;
 
-            buildDurations.push([build_duration.toFixed(1),(finished_at.getTime()), 'ABC'])
+            buildDurations.push([build_duration.toFixed(1),(finished_at.getTime())])
           }
         })
         timeseries_data.push({
-          target: app.app.title,
-          datapoints: buildDurations
+          target: app.title,
+          datapoints: buildDurations.sort((a,b) => b[1] - a[1])
         })
       }
     })
@@ -109,8 +101,8 @@ module.exports = {
           }
         })
         timeseries_data.push({
-          target: app.app.title,
-          datapoints: buildDurations
+          target: app.title,
+          datapoints: buildDurations.sort((a,b) => b[1] - a[1])
         })
       }
     })

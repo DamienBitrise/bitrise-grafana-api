@@ -52,6 +52,7 @@ app.post('/builds/query', (req, res) => {
   } else {
     appSlugs = appSlugs.split(',')
   }
+  console.log('AppSlugs: ', appSlugs);
   const API_KEY = req.header('Authorization');
   builds.getAllData(appSlugs, API_KEY, from, to, (data) => {
     let timeseries_data = builds.getBuildTimeseriesData(appSlugs, data);
