@@ -30,6 +30,11 @@ app.get('/builds', (req, res) => {
   res.status(200).json({alive:true});
 });
 
+app.get('/running', (req, res) => {
+  console.log('/running health check');
+  res.status(200).json({alive:true});
+});
+
 app.get('/queue', (req, res) => {
   console.log('/queue health check');
   res.status(200).json({alive:true});
@@ -45,14 +50,12 @@ app.post('/builds/query', (req, res) => {
   let body = req.body;
   let from = body.range.from;
   let to = body.range.to;
-  let timeseries_data = [];
   let appSlugs = req.header('appSlugs');
   if(!appSlugs || appSlugs == ''){
     appSlugs = null;
   } else {
     appSlugs = appSlugs.split(',')
   }
-  console.log('AppSlugs: ', appSlugs);
   const API_KEY = req.header('Authorization');
   builds.getAllData(appSlugs, API_KEY, from, to, (data) => {
     let timeseries_data = builds.getBuildTimeseriesData(appSlugs, data);
@@ -85,7 +88,6 @@ app.post('/queue/query', (req, res) => {
   let body = req.body;
   let from = body.range.from;
   let to = body.range.to;
-  let timeseries_data = [];
   let appSlugs = req.header('appSlugs');
   if(!appSlugs || appSlugs == ''){
     appSlugs = null;
@@ -103,6 +105,47 @@ app.post('/queue/query', (req, res) => {
 
 app.post('/queue/annotations', (req, res) => {
   console.log('/queue/annotations');
+  res.json([
+  // {
+  //   "text": "text shown in body",
+  //   "title": "Annotation Title",
+  //   "isRegion": true,
+  //   "time": "timestamp",
+  //   "timeEnd": "timestamp",
+  //   "tags": ["tag1"]
+  // }
+  ]);
+});
+
+app.post('/running/search', (req, res) => {
+  console.log('/running/search');
+  res.json(["running"]);
+});
+
+app.post('/running/query', (req, res) => {
+  console.log('/running');
+
+  let body = req.body;
+  let from = body.range.from;
+  let to = body.range.to;
+  let appSlugs = req.header('appSlugs');
+  if(!appSlugs || appSlugs == ''){
+    appSlugs = null;
+  } else {
+    appSlugs = appSlugs.split(',')
+  }
+  console.log('App Slug: ', appSlugs);
+  const API_KEY = req.header('Authorization');
+  builds.getAllData(appSlugs, API_KEY, from, to, (data) => {
+    let table_data = builds.getBuildTableData(appSlugs, data);
+    res.json(table_data);
+  });
+
+  
+});
+
+app.post('/running/annotations', (req, res) => {
+  console.log('/running/annotations');
   res.json([
   // {
   //   "text": "text shown in body",
