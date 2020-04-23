@@ -40,9 +40,11 @@ Copy the base URL from the running Repl
 ## Install Grafana JSON Plugin
 
 **Table Data Source**
+
 - https://github.com/simPod/grafana-json-datasource
 
 **Chart Data Source**
+
 - https://grafana.com/grafana/plugins/simpod-json-datasource
 
 ## Generate Personal Access Token for Bitrise API
@@ -52,9 +54,11 @@ Copy the base URL from the running Repl
 ## Configure Grafana JSON Data Sources
 
 **Table**
+
 ![](images/TableDataSource.png)
 
 **Charts**
+
 ![](images/JSON-Plugin-Config.png)
 
 Using the Base URL from your server or Repl configure two Grafana JSON Data Sources
