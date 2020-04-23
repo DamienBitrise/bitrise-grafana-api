@@ -70,4 +70,6 @@ Using the Base URL from your server or Repl configure two Grafana JSON Data Sour
 
 ## Configure Grafana JSON Dashboard
 
-![](images/Grafana-Dashboard-Config.png)
+Just Import Grafana Dashboard JSON here:
+
+https://github.com/DamienBitrise/bitrise-grafana-api/blob/master/Bitrise%20Dashboard.json
