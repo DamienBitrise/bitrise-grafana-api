@@ -72,6 +72,13 @@ Using the Base URL from your server or Repl configure two Grafana JSON Data Sour
 - content ('application/json')
 - appSlugs (comma seperated list of app slugs) [Optional omit to select all apps]
 
+**URL:** BASE_URL/stats
+
+**Headers**
+- Authorization (Personal Access Token for Bitrise API)
+- content ('application/json')
+- appSlugs (comma seperated list of app slugs) [Optional omit to select all apps]
+
 ### Builds Chart
 
 **URL:** BASE_URL/builds
