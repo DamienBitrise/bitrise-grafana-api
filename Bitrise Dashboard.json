@@ -25,8 +25,8 @@
       "datasource": "Running",
       "fontSize": "100%",
       "gridPos": {
-        "h": 12,
-        "w": 24,
+        "h": 10,
+        "w": 12,
         "x": 0,
         "y": 0
       },
@@ -140,7 +140,47 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Running Builds",
+      "title": "Builds",
+      "transform": "table",
+      "type": "table"
+    },
+    {
+      "columns": [],
+      "datasource": "Stats",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 8,
+      "pageSize": null,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": false
+      },
+      "styles": [
+        {
+          "$$hashKey": "object:352",
+          "alias": "Time",
+          "align": "auto",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "date"
+        }
+      ],
+      "targets": [
+        {
+          "refId": "A",
+          "target": "stats",
+          "type": "table"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Build Stats",
       "transform": "table",
       "type": "table"
     },
@@ -156,7 +196,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 10
       },
       "hiddenSeries": false,
       "id": 2,
@@ -254,7 +294,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 19
       },
       "hiddenSeries": false,
       "id": 4,
@@ -343,7 +383,7 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-30d",
     "to": "now"
   },
   "timepicker": {
@@ -366,5 +406,5 @@
   "variables": {
     "list": []
   },
-  "version": 31
+  "version": 35
 }

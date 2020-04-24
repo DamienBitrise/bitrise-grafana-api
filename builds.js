@@ -155,6 +155,136 @@ module.exports = {
     ];
   },
 
+  getStatsTableData: (appSlugsFilter, data) => {
+    let table_data = [];
+    let appSlugs = Object.keys(data);
+    let stats = {};
+    appSlugs.forEach((appSlug) => {
+      if(!appSlugsFilter || appSlugsFilter.indexOf(appSlug) != -1){
+        let app = data[appSlug];
+        app.builds.forEach((build) => {
+          if(build.status_text != 'in-progress' && build.started_on_worker_at){
+            let now = new Date();
+            let triggered_at = new Date(build.triggered_at);
+            let started_on_worker_at = new Date(build.started_on_worker_at);
+            let queue_duration = (started_on_worker_at.getTime() - triggered_at.getTime()) / 60000;
+            let finished_at = new Date(build.finished_at);
+            let duration = (finished_at.getTime() - started_on_worker_at.getTime()) / 60000;
+            
+            let name = app.app.title;
+            let workflow = build.triggered_workflow;
+            let stack = build.stack_identifier;
+            let branch = build.branch;
+            let status = build.status_text;
+            let slug = build.slug;
+
+            let key = appSlug + '_' + workflow + '_' + branch + '_' + stack + '_' + status;
+            if (!stats[key]) {
+              stats[key] = {};
+            }
+            stats[key].app = name;
+            stats[key].workflow = workflow;
+            stats[key].stack = stack;
+            stats[key].branch = branch;
+            stats[key].status = status;
+            stats[key].count = stats[key].count ? stats[key].count + 1 : 1;
+            stats[key].total = stats[key].total ? stats[key].total + duration : duration;
+            stats[key].queue_total = stats[key].queue_total ? stats[key].queue_total + queue_duration : queue_duration;
+
+            let allKey = 'All_' + status;
+            if (!stats[allKey]) {
+              stats[allKey] = {};
+            }
+            stats[allKey].app = 'All';
+            stats[allKey].workflow = 'All';
+            stats[allKey].stack = 'All';
+            stats[allKey].branch = 'All';
+            stats[allKey].status = status;
+            stats[allKey].count = stats[allKey].count ? stats[allKey].count + 1 : 1;
+            stats[allKey].total = stats[allKey].total ? stats[allKey].total + duration : duration;
+            stats[allKey].queue_total = stats[allKey].queue_total ? stats[allKey].queue_total + queue_duration : queue_duration;
+          }
+        })
+      }
+    })
+    let allKeys = Object.keys(stats).filter((key) => key.indexOf('All_') == 0);
+    
+    allKeys.forEach((key) => {
+      let average = stats[key].total / stats[key].count;
+      let averageQueue = stats[key].queue_total / stats[key].count;
+      table_data.push([
+        stats[key].app,
+        stats[key].workflow,
+        stats[key].stack,
+        stats[key].branch,
+        stats[key].status,
+        stats[key].count,
+        average.toFixed(2),
+        averageQueue.toFixed(2)
+      ])
+    });
+
+    let keys = Object.keys(stats);
+    keys.forEach((key) => {
+      if (stats[key].app != 'All') {
+        let average = stats[key].total / stats[key].count;
+        let averageQueue = stats[key].queue_total / stats[key].count;
+        table_data.push([
+          stats[key].app,
+          stats[key].workflow,
+          stats[key].stack,
+          stats[key].branch,
+          stats[key].status,
+          stats[key].count,
+          average.toFixed(2),
+          averageQueue.toFixed(2)
+        ])
+      }
+    });
+
+    // table_data.sort((a,b) => b[0].getTime() - a[0].getTime())
+    return [
+      {
+        "type":"table",
+        "columns":[
+            {
+              "text":"App",
+              "type":"string"
+            },
+            {
+              "text":"Workflow",
+              "type":"string"
+            },
+            {
+              "text":"Stack",
+              "type":"string"
+            },
+            {
+              "text":"Branch",
+              "type":"string"
+            },
+            {
+              "text":"Status",
+              "type":"string"
+            },
+            {
+              "text":"Count",
+              "type":"int"
+            },
+            {
+              "text":"Avg Build Time",
+              "type":"string"
+            },
+            {
+              "text":"Avg Queue Time",
+              "type":"string"
+            }
+        ],
+        "rows": table_data
+      }
+    ];
+  },
+
   getBuildTimeseriesData: (appSlugsFilter, data) => {
     let timeseries_data = [];
     let appSlugs = Object.keys(data);

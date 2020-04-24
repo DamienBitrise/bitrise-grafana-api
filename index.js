@@ -35,6 +35,11 @@ app.get('/running', (req, res) => {
   res.status(200).json({alive:true});
 });
 
+app.get('/stats', (req, res) => {
+  console.log('/stats health check');
+  res.status(200).json({alive:true});
+});
+
 app.get('/queue', (req, res) => {
   console.log('/queue health check');
   res.status(200).json({alive:true});
@@ -50,6 +55,7 @@ app.post('/builds/query', (req, res) => {
   let body = req.body;
   let from = body.range.from;
   let to = body.range.to;
+  let timeseries_data = [];
   let appSlugs = req.header('appSlugs');
   if(!appSlugs || appSlugs == ''){
     appSlugs = null;
@@ -66,16 +72,7 @@ app.post('/builds/query', (req, res) => {
 
 app.post('/builds/annotations', (req, res) => {
   console.log('/builds/annotations');
-  res.json([
-  // {
-  //   "text": "text shown in body",
-  //   "title": "Annotation Title",
-  //   "isRegion": true,
-  //   "time": "timestamp",
-  //   "timeEnd": "timestamp",
-  //   "tags": ["tag1"]
-  // }
-  ]);
+  res.json([]);
 });
 
 app.post('/queue/search', (req, res) => {
@@ -88,6 +85,7 @@ app.post('/queue/query', (req, res) => {
   let body = req.body;
   let from = body.range.from;
   let to = body.range.to;
+  let timeseries_data = [];
   let appSlugs = req.header('appSlugs');
   if(!appSlugs || appSlugs == ''){
     appSlugs = null;
@@ -105,16 +103,7 @@ app.post('/queue/query', (req, res) => {
 
 app.post('/queue/annotations', (req, res) => {
   console.log('/queue/annotations');
-  res.json([
-  // {
-  //   "text": "text shown in body",
-  //   "title": "Annotation Title",
-  //   "isRegion": true,
-  //   "time": "timestamp",
-  //   "timeEnd": "timestamp",
-  //   "tags": ["tag1"]
-  // }
-  ]);
+  res.json([]);
 });
 
 app.post('/running/search', (req, res) => {
@@ -123,11 +112,12 @@ app.post('/running/search', (req, res) => {
 });
 
 app.post('/running/query', (req, res) => {
-  console.log('/running');
+  console.log('/running/query');
 
   let body = req.body;
   let from = body.range.from;
   let to = body.range.to;
+  let timeseries_data = [];
   let appSlugs = req.header('appSlugs');
   if(!appSlugs || appSlugs == ''){
     appSlugs = null;
@@ -140,22 +130,42 @@ app.post('/running/query', (req, res) => {
     let table_data = builds.getBuildTableData(appSlugs, data);
     res.json(table_data);
   });
-
-  
 });
 
 app.post('/running/annotations', (req, res) => {
   console.log('/running/annotations');
-  res.json([
-  // {
-  //   "text": "text shown in body",
-  //   "title": "Annotation Title",
-  //   "isRegion": true,
-  //   "time": "timestamp",
-  //   "timeEnd": "timestamp",
-  //   "tags": ["tag1"]
-  // }
-  ]);
+  res.json([]);
+});
+
+app.post('/stats/search', (req, res) => {
+  console.log('/stats/search');
+  res.json(["stats"]);
+});
+
+app.post('/stats/query', (req, res) => {
+  console.log('/stats/query');
+
+  let body = req.body;
+  let from = body.range.from;
+  let to = body.range.to;
+  let timeseries_data = [];
+  let appSlugs = req.header('appSlugs');
+  if(!appSlugs || appSlugs == ''){
+    appSlugs = null;
+  } else {
+    appSlugs = appSlugs.split(',')
+  }
+  console.log('App Slug: ', appSlugs);
+  const API_KEY = req.header('Authorization');
+  builds.getAllData(appSlugs, API_KEY, from, to, (data) => {
+    let table_data = builds.getStatsTableData(appSlugs, data);
+    res.json(table_data);
+  });
+});
+
+app.post('/stats/annotations', (req, res) => {
+  console.log('/stats/annotations');
+  res.json([]);
 });
 
 app.listen(3000, () => console.log('server started'));
