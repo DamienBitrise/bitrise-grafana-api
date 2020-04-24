@@ -29,6 +29,7 @@ Copy the base URL from the running Repl
 - /builds
 - /queue
 - /running
+- /stats
 
 ## Each endpoint will have the following APIs
 
