@@ -24,10 +24,11 @@ Copy the base URL from the running Repl
 
 ![](images/replit-url.png)
 
-## Two Grafana JSON Endpoints will be available
+## The following Grafana JSON Endpoints will be available
 
 - /builds
 - /queue
+- /running
 
 ## Each endpoint will have the following APIs
 
@@ -38,6 +39,12 @@ Copy the base URL from the running Repl
 
 ## Install Grafana JSON Plugin
 
+**Table Data Source**
+
+- https://github.com/simPod/grafana-json-datasource
+
+**Chart Data Source**
+
 - https://grafana.com/grafana/plugins/simpod-json-datasource
 
 ## Generate Personal Access Token for Bitrise API
@@ -46,27 +53,42 @@ Copy the base URL from the running Repl
 
 ## Configure Grafana JSON Data Sources
 
+**Table**
+
+![](images/TableDataSource.png)
+
+**Charts**
+
 ![](images/JSON-Plugin-Config.png)
 
 Using the Base URL from your server or Repl configure two Grafana JSON Data Sources
 
-### Builds
+### Builds Table
+
+**URL:** BASE_URL/running
+
+**Headers**
+- Authorization (Personal Access Token for Bitrise API)
+- content ('application/json')
+- appSlugs (comma seperated list of app slugs) [Optional omit to select all apps]
+
+### Builds Chart
 
 **URL:** BASE_URL/builds
 
 **Headers**
 - Authorization (Personal Access Token for Bitrise API)
 - content ('application/json')
-- appSlugs (comma seperated list of app slugs)
+- appSlugs (comma seperated list of app slugs) [Optional omit to select all apps]
 
-### Queue
+### Queue Chart
 
 **URL:** BASE_URL/queue
 
 **Headers**
 - Authorization (Personal Access Token for Bitrise API)
 - content ('application/json')
-- appSlugs (comma seperated list of app slugs)
+- appSlugs (comma seperated list of app slugs) [Optional omit to select all apps]
 
 ## Configure Grafana JSON Dashboard
 
