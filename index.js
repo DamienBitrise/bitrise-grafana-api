@@ -21,7 +21,7 @@ setInterval(()=>{
 }, 10*1000*60);
 
 app.get('/', (req, res) => {
-  console.log('/ health check');
+  console.log('/health check');
   res.status(200).json({alive:true});
 });
 

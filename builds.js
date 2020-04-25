@@ -301,10 +301,13 @@ module.exports = {
             buildDurations.push([build_duration.toFixed(1),(finished_at.getTime()), 'ABC'])
           }
         })
-        timeseries_data.push({
-          target: app.app.title,
-          datapoints: buildDurations
-        })
+        buildDurations.sort((a, b)=> b[1] - a[1]);
+        if(buildDurations.length > 0){
+          timeseries_data.push({
+            target: app.app.title,
+            datapoints: buildDurations
+          })
+        }
       }
     })
     return timeseries_data;
@@ -327,10 +330,13 @@ module.exports = {
             buildDurations.push([queue_duration.toFixed(1),(finished_at.getTime())])
           }
         })
-        timeseries_data.push({
-          target: app.app.title,
-          datapoints: buildDurations
-        })
+        buildDurations.sort((a, b)=> b[1] - a[1]);
+        if(buildDurations.length > 0){
+          timeseries_data.push({
+            target: app.app.title,
+            datapoints: buildDurations
+          })
+        }
       }
     })
     return timeseries_data;
