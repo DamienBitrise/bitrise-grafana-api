@@ -29,6 +29,7 @@ Copy the base URL from the running Repl
 - /builds
 - /queue
 - /running
+- /stats
 
 ## Each endpoint will have the following APIs
 
@@ -66,6 +67,13 @@ Using the Base URL from your server or Repl configure two Grafana JSON Data Sour
 ### Builds Table
 
 **URL:** BASE_URL/running
+
+**Headers**
+- Authorization (Personal Access Token for Bitrise API)
+- content ('application/json')
+- appSlugs (comma seperated list of app slugs) [Optional omit to select all apps]
+
+**URL:** BASE_URL/stats
 
 **Headers**
 - Authorization (Personal Access Token for Bitrise API)
