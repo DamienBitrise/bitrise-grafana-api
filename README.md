@@ -42,7 +42,7 @@ Copy the base URL from the running Repl
 
 **Table Data Source**
 
-- https://github.com/simPod/grafana-json-datasource
+- https://grafana.com/grafana/plugins/grafana-simple-json-datasource/installation
 
 **Chart Data Source**
 
