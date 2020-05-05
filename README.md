@@ -112,11 +112,13 @@ https://github.com/DamienBitrise/bitrise-grafana-api/blob/master/Bitrise%20Dashb
 
 ## Updating Data Sources
 
-Note: Due to a Grafana bug with importing dashboards with Data Sources, you may need to unselect and reselect the data sources in the Dashboard panels. 
+**Note:** Due to a Grafana bug with importing dashboards with Data Sources, you may need to unselect and reselect the data sources in the Dashboard panels. 
 
-### Reselect the DataSources:
+## Reselect the DataSources:
 
 **Step 1:** Click the title of each panel in the Dashboard view and click edit. 
+
 **Step 2:** Select the "Query" dropdown and select a different data source, then select the original data source again.
 
 This updates the Data Source IDs to match the new DataSources you added previously.
+
