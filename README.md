@@ -4,6 +4,12 @@ Grafana Wrapper for Bitrise API
 
 ![](images/Grafana-Dashboard.png)
 
+# Prerequisites 
+
+## Grafana Account
+
+Sign up for a free trial account here: https://grafana.com/signup/cloud/select-org
+
 # Run Locally
 
 ## Install Dependencies
@@ -103,3 +109,14 @@ Using the Base URL from your server or Repl configure two Grafana JSON Data Sour
 Just Import Grafana Dashboard JSON here:
 
 https://github.com/DamienBitrise/bitrise-grafana-api/blob/master/Bitrise%20Dashboard.json
+
+## Updating Data Sources
+
+Note: Due to a Grafana bug with importing dashboards with Data Sources, you may need to unselect and reselect the data sources in the Dashboard panels. 
+
+### Reselect the DataSources:
+
+**Step 1:** Click the title of each panel in the Dashboard view and click edit. 
+**Step 2:** Select the "Query" dropdown and select a different data source, then select the original data source again.
+
+This updates the Data Source IDs to match the new DataSources you added previously.
