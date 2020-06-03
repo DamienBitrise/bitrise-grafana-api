@@ -1,8 +1,8 @@
 const utils = require('./utils')
 const fetch = require('node-fetch');
 
-function getApps(all_apps, api_key, callback) {
-  return fetch(utils.BASE_URL, utils.getHeaders(api_key))
+function getApps(all_apps, api_key, next, callback) {
+  return fetch(utils.BASE_URL + (next ? '?next=' + next : ''), utils.getHeaders(api_key))
     .then(res => res.json())
     .then((apps) => {
       apps.data.forEach((app)=>{
@@ -42,7 +42,7 @@ function getBuilds(api_key, all_builds, from, to, appSlug, next, callback) {
 module.exports = {
   getAllData: (appSlugsFilter, api_key, from, to, callback) => {
     let all_apps = {};
-    getApps(all_apps, api_key, (apps) => {
+    getApps(all_apps, api_key, null, (apps) => {
       let appSlugs = Object.keys(apps);
       let complete = 0;
       appSlugs.forEach((appSlug)=>{
@@ -177,6 +177,11 @@ module.exports = {
             let branch = build.branch;
             let status = build.status_text;
             let slug = build.slug;
+
+            // Group Everything except master && develop into other group
+            // if (branch != 'master' && branch != 'develop') {
+            //   branch = 'other';
+            // }
 
             let key = appSlug + '_' + workflow + '_' + branch + '_' + stack + '_' + status;
             if (!stats[key]) {
