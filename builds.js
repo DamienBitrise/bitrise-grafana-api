@@ -305,7 +305,8 @@ module.exports = {
             buildDurations.push([build_duration.toFixed(1),(finished_at.getTime()), 'ABC'])
           }
         })
-        if(app.builds.length > 0){
+        buildDurations.sort((a, b)=> b[1] - a[1]);
+        if(buildDurations.length > 0){
           timeseries_data.push({
             target: app.app.title,
             datapoints: buildDurations
@@ -333,7 +334,8 @@ module.exports = {
             buildDurations.push([queue_duration.toFixed(1),(finished_at.getTime())])
           }
         })
-        if(app.builds.length > 0){
+        buildDurations.sort((a, b)=> b[1] - a[1]);
+        if(buildDurations.length > 0){
           timeseries_data.push({
             target: app.app.title,
             datapoints: buildDurations
