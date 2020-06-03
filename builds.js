@@ -178,6 +178,7 @@ module.exports = {
             let status = build.status_text;
             let slug = build.slug;
 
+            // Group Everything except master && develop into other group
             // if (branch != 'master' && branch != 'develop') {
             //   branch = 'other';
             // }
