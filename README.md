@@ -30,6 +30,8 @@ Copy the base URL from the running Repl
 
 ![](images/replit-url.png)
 
+Make sure to update the url in the code here also: https://github.com/DamienBitrise/bitrise-grafana-api/blob/master/index.js#L12
+
 ## The following Grafana JSON Endpoints will be available
 
 - /builds
