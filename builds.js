@@ -1,8 +1,10 @@
 const utils = require('./utils')
+const logParser = require('./logParser')
 const fetch = require('node-fetch');
 
-function getApps(all_apps, api_key, callback) {
-  return fetch(utils.BASE_URL, utils.getHeaders(api_key))
+function getApps(all_apps, api_key, next, callback) {
+  // console.log(utils.BASE_URL + (next ? '?next=' + next : ''), all_apps.length);
+  return fetch(utils.BASE_URL + (next ? '?next=' + next : ''), utils.getHeaders(api_key))
     .then(res => res.json())
     .then((apps) => {
       apps.data.forEach((app)=>{
@@ -15,6 +17,8 @@ function getApps(all_apps, api_key, callback) {
       } else {
         callback(all_apps);
       }
+    }).catch((error)=>{
+      console.log('get Apps error: ', error);
     });
 }
 
@@ -25,9 +29,11 @@ function getBuilds(api_key, all_builds, from, to, appSlug, next, callback) {
   let toTimestamp = parseInt(toDate.getTime()/1000);
   let nextStr = next ? '?after='+fromTimestamp+'&before='+toTimestamp+'&next='+next : '?after='+fromTimestamp+'&before='+toTimestamp;
   let url = utils.BASE_URL+'/'+appSlug+'/builds'+nextStr;
+  // console.log('Getting builds...: ', url)
   return fetch(url, utils.getHeaders(api_key))
     .then(res => res.json())
     .then((builds) => {
+      // console.log('Got builds:', builds.data.length);
       if(!builds.paging){
         console.log('Error:', builds);
       }
@@ -37,12 +43,15 @@ function getBuilds(api_key, all_builds, from, to, appSlug, next, callback) {
       } else {
         callback(all_builds);
       }
+    }).catch((error)=>{
+      console.log('get Builds error: ', error);
     });
 }
+
 module.exports = {
   getAllData: (appSlugsFilter, api_key, from, to, callback) => {
     let all_apps = {};
-    getApps(all_apps, api_key, (apps) => {
+    getApps(all_apps, api_key, null, (apps) => {
       let appSlugs = Object.keys(apps);
       let complete = 0;
       appSlugs.forEach((appSlug)=>{
@@ -51,10 +60,12 @@ module.exports = {
           let all_builds = [];
           getBuilds(api_key, all_builds, from, to, appSlug, 0, (builds) => {
             complete++;
-            all_apps[appSlug].builds = builds;
-            if(complete == appSlugs.length || (appSlugsFilter && complete == appSlugsFilter.length)){
-              callback(all_apps);
-            }
+            logParser.getStepTimings(api_key, appSlug, builds, (buildsBack)=>{
+              all_apps[appSlug].builds = buildsBack;
+              if(complete == appSlugs.length || (appSlugsFilter && complete == appSlugsFilter.length)){
+                callback(all_apps);
+              }
+            });
           })
         }
       });
@@ -335,6 +346,34 @@ module.exports = {
           timeseries_data.push({
             target: app.app.title,
             datapoints: buildDurations
+          })
+        }
+      }
+    })
+    return timeseries_data;
+  },
+  getStepsTimeseriesData: (appSlugsFilter, data) => {
+    let timeseries_data = [];
+    let appSlugs = Object.keys(data);
+    appSlugs.forEach((appSlug) => {
+      if(!appSlugsFilter || appSlugsFilter.indexOf(appSlug) != -1){
+        let stepDurations = [];
+        let app = data[appSlug];
+        app.builds.forEach((build) => {
+          if((build.status_text == 'success' || build.status_text == 'error') && build.started_on_worker_at){
+            let finished_at = new Date(build.finished_at);
+            
+            if(build.steps && build.steps.length > 0){
+              let step_duration = build.steps[0].time;
+              stepDurations.push([step_duration,(finished_at.getTime())])
+            }
+          }
+        })
+        stepDurations.sort((a, b)=> b[1] - a[1]);
+        if(stepDurations.length > 0){
+          timeseries_data.push({
+            target: app.app.title,
+            datapoints: stepDurations
           })
         }
       }

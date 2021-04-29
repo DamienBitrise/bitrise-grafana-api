@@ -7,7 +7,52 @@ const app = express();
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+/*
+const {InfluxDB} = require('@influxdata/influxdb-client')
 
+// You can generate a Token from the "Tokens Tab" in the UI
+const token = '2w8urO8AVPCBvYCgBQevCxWipHox9d9j8XRI7w1HDcfkQoM8TxNqY7LFVBX-P0nNGfeWRkwoJtfsU7q311r6Hg==';
+const org = 'damien.murphy@bitrise.io';
+const bucket = 'bitrise-grafana-db';
+
+const client = new InfluxDB({url: 'https://us-west-2-1.aws.cloud2.influxdata.com', token: token})
+
+const {Point} = require('@influxdata/influxdb-client')
+const writeApi = client.getWriteApi(org, bucket)
+writeApi.useDefaultTags({host: 'host1'})
+
+const point = new Point('mem')
+  .floatField('used_percent', 23.43234543)
+writeApi.writePoint(point)
+writeApi
+    .close()
+    .then(() => {
+        console.log('FINISHED Write')
+    })
+    .catch(e => {
+        console.error(e)
+        console.log('\nFinished ERROR')
+    })
+
+
+const queryApi = client.getQueryApi(org)
+const query = `from(bucket: "${bucket}") |> range(start: -1h)`
+queryApi.queryRows(query, {
+  next(row, tableMeta) {
+    const o = tableMeta.toObject(row)
+    console.log(
+      `${o._time} ${o._measurement} in '${o.location}' (${o.example}): ${o._field}=${o._value}`
+    )
+  },
+  error(error) {
+    console.error(error)
+    console.log('\nFinished ERROR')
+  },
+  complete() {
+    console.log('\nFinished Read SUCCESS')
+  },
+})
+*/
 function keepAlive(){
   fetch('https://BitriseAPI--damo1884.repl.co/')
     .then(res => res.json())
@@ -16,9 +61,9 @@ function keepAlive(){
     });
 }
 
-setInterval(()=>{
-  keepAlive()
-}, 10*1000*60);
+// setInterval(()=>{
+//   keepAlive()
+// }, 10*1000*60);
 
 app.get('/', (req, res) => {
   console.log('/health check');
@@ -55,7 +100,6 @@ app.post('/builds/query', (req, res) => {
   let body = req.body;
   let from = body.range.from;
   let to = body.range.to;
-  let timeseries_data = [];
   let appSlugs = req.header('appSlugs');
   if(!appSlugs || appSlugs == ''){
     appSlugs = null;
@@ -63,6 +107,7 @@ app.post('/builds/query', (req, res) => {
     appSlugs = appSlugs.split(',')
   }
   const API_KEY = req.header('Authorization');
+
   builds.getAllData(appSlugs, API_KEY, from, to, (data) => {
     let timeseries_data = builds.getBuildTimeseriesData(appSlugs, data);
     res.json(timeseries_data);
@@ -85,7 +130,6 @@ app.post('/queue/query', (req, res) => {
   let body = req.body;
   let from = body.range.from;
   let to = body.range.to;
-  let timeseries_data = [];
   let appSlugs = req.header('appSlugs');
   if(!appSlugs || appSlugs == ''){
     appSlugs = null;
@@ -117,7 +161,6 @@ app.post('/running/query', (req, res) => {
   let body = req.body;
   let from = body.range.from;
   let to = body.range.to;
-  let timeseries_data = [];
   let appSlugs = req.header('appSlugs');
   if(!appSlugs || appSlugs == ''){
     appSlugs = null;
@@ -148,7 +191,6 @@ app.post('/stats/query', (req, res) => {
   let body = req.body;
   let from = body.range.from;
   let to = body.range.to;
-  let timeseries_data = [];
   let appSlugs = req.header('appSlugs');
   if(!appSlugs || appSlugs == ''){
     appSlugs = null;
@@ -168,4 +210,34 @@ app.post('/stats/annotations', (req, res) => {
   res.json([]);
 });
 
-app.listen(3000, () => console.log('server started'));
+app.post('/steps/search', (req, res) => {
+  console.log('/queue/search');
+  res.json(["queue"]);
+});
+
+app.get('/steps/query', (req, res) => {
+  console.log('/steps/query');
+  let body = req.body;
+  let from = body.range.from;
+  let to = body.range.to;
+  let appSlugs = req.header('appSlugs');
+  if(!appSlugs || appSlugs == ''){
+    appSlugs = null;
+  } else {
+    appSlugs = appSlugs.split(',')
+  }
+  console.log('App Slug: ', appSlugs);
+  const API_KEY = req.header('Authorization');
+  builds.getAllData(appSlugs, API_KEY, from, to, (data) => {
+    let timeseries_data = builds.getStepsTimeseriesData(appSlugs, data);
+    res.json(timeseries_data);
+  });
+});
+
+
+app.post('/steps/annotations', (req, res) => {
+  console.log('/steps/annotations');
+  res.json([]);
+});
+
+app.listen(3001, () => console.log('server started'));
