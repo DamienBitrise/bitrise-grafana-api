@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 function keepAlive(){
-  fetch('https://BitriseAPI--damo1884.repl.co/')
+  fetch('https://BitriseAPI--xxx.repl.co/')
     .then(res => res.json())
     .then((res) => {
       console.log('Keep Alive');
